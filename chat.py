@@ -17,9 +17,6 @@ for message in st.session_state.message_list:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-
-
-
 if user_question := st.chat_input(placeholder="디리아에 관련된 궁금한 내용들을 말씀해주세요!"):
     with st.chat_message("user"):
         st.write(user_question)
