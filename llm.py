@@ -55,7 +55,7 @@ def get_history_retriever():
     return history_aware_retriever
 
 
-def get_llm(model='GPT-4o-mini'):
+def get_llm(model='gpt-3.5-turbo'):
     llm = ChatOpenAI(model=model)
     return llm
 
