@@ -25,7 +25,7 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 def get_retriever():
     embedding = OpenAIEmbeddings(model='text-embedding-3-large')
     index_name = 'wiki-openai-index'
-    namespace = "doc_v2"
+    namespace = "doc_v3"
     database = PineconeVectorStore.from_existing_index(index_name=index_name, namespace=namespace, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
     return retriever
@@ -47,7 +47,7 @@ def get_history_retriever():
     contextualize_q_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", contextualize_q_system_prompt),
-            MessagesPlaceholder("chat_history"),
+            MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}"),
         ]
     )
@@ -96,13 +96,10 @@ def get_rag_chain():
     You are a smart Direa advisory chatbot. Answer user questions about Direa.
     Please follow these rules when providing answers:
     1. All answers should be based on the content provided in the Document.
-    2. If you don't know the answer, do not make one up. Instead, say [정확한 답을 찾을 수 없지만, 다음 링크를 확인해 보시기 바랍니다.] and then add a list of reference sources.
-    3. *Reference sources* refer to the metadata sources you use.
-    4. Include a list of directly referenced sources in every answer.
-    5. Always mention the source with every piece of information you provide.
+    2. If you don't know the answer, do not make one up. Instead, say [정확한 답을 찾을 수 없지만, 다음 링크를 확인해 보시기 바랍니다.]
     {context}
     """
-                     )
+    )
 
     qa_prompt = ChatPromptTemplate.from_messages(
         [
@@ -134,7 +131,7 @@ def get_rag_chain():
         input_messages_key="input",
         history_messages_key="chat_history",
         output_messages_key="answer",
-    ).pick('answer')
+    ).pick(["answer", "context"])
 
     return conversational_rag_chain
 
@@ -142,14 +139,22 @@ def get_rag_chain():
 def get_ai_response(user_message):
     dictionary_chain = get_dictionary_chain()
     rag_chain = get_rag_chain()
-    tax_chain = {"input": dictionary_chain} | rag_chain
-    ai_response = tax_chain.stream(
+    final_chain = {"input": dictionary_chain} | rag_chain
+    ai_response = final_chain.pick("answer").stream(
         {
             "question": user_message
         },
         config={
             "configurable": {"session_id": "abc123"}
+        }
+    )
+    ai_resource = final_chain.pick("context").invoke(
+        {
+            "question": user_message
         },
+        config={
+            "configurable": {"session_id": "abc123"}
+        }
     )
 
-    return ai_response
+    return ai_response, ai_resource
