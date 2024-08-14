@@ -5,6 +5,7 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
+from langchain_upstage import UpstageEmbeddings
 from langchain_pinecone import PineconeVectorStore
 
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -26,6 +27,9 @@ def get_retriever():
     embedding = OpenAIEmbeddings(model='text-embedding-3-large')
     index_name = 'wiki-openai-index'
     namespace = "doc_v3"
+    embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
+    index_name = 'wiki-upstage-index'
+    namespace = "doc_v1"
     database = PineconeVectorStore.from_existing_index(index_name=index_name, namespace=namespace, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
     return retriever
