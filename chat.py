@@ -12,11 +12,11 @@ st.caption("디리아에 관련된 모든것을 답해드립니다!")
 
 load_dotenv()
 
+
 def write_sources(documents):
     sources = set()  # 중복을 제거하기 위해 set 사용
-    st.write("\n*이 정보는 다음의 자료를 기반으로 제공되었습니다.*")
 
-    unique_sources = []
+    unique_sources = ["\n*이 정보는 다음의 자료를 기반으로 제공되었습니다.*"]
 
     for doc in documents:
         source = doc.metadata.get("source")
@@ -45,5 +45,5 @@ if user_question := st.chat_input(placeholder="디리아에 관련된 궁금한 
             ai_message = st.write_stream(ai_response)
             st.session_state.message_list.append({"role": "ai", "content": ai_message})
 
-            # st.write(f"AI resource: {ai_resource}")
-            st.write_stream(write_sources(ai_resource))
+    resource = st.write_stream(write_sources(ai_resource))
+    st.session_state.message_list.append({"role": "source", "content": resource})

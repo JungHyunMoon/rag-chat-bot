@@ -24,9 +24,9 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def get_retriever():
-    embedding = OpenAIEmbeddings(model='text-embedding-3-large')
-    index_name = 'wiki-openai-index'
-    namespace = "doc_v3"
+    # embedding = OpenAIEmbeddings(model='text-embedding-3-large')
+    # index_name = 'wiki-openai-index'
+    # namespace = "doc_v3"
     embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
     index_name = 'wiki-upstage-index'
     namespace = "doc_v1"
@@ -100,7 +100,8 @@ def get_rag_chain():
     You are a smart Direa advisory chatbot. Answer user questions about Direa.
     Please follow these rules when providing answers:
     1. All answers should be based on the content provided in the Document.
-    2. If you don't know the answer, do not make one up. Instead, say [정확한 답을 찾을 수 없지만, 다음 링크를 확인해 보시기 바랍니다.]
+    2. If you don't know the answer, do not make one up.
+    Instead, say [정확한 답을 찾을 수 없습니다. 좀더 자세한 정보를 제공해 주세요.]
     {context}
     """
     )
@@ -135,7 +136,7 @@ def get_rag_chain():
         input_messages_key="input",
         history_messages_key="chat_history",
         output_messages_key="answer",
-    ).pick(["answer", "context"])
+    )
 
     return conversational_rag_chain
 
