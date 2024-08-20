@@ -3,8 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, FewS
     PromptTemplate
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_upstage import UpstageEmbeddings
 from langchain_pinecone import PineconeVectorStore
 
@@ -26,7 +25,7 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 def get_retriever():
     # embedding = OpenAIEmbeddings(model='text-embedding-3-large')
     # index_name = 'wiki-openai-index'
-    # namespace = "doc_v3"
+    # namespace = "doc_v2"
     embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
     index_name = 'wiki-upstage-index'
     namespace = "doc_v1"
@@ -100,8 +99,9 @@ def get_rag_chain():
     You are a smart Direa advisory chatbot. Answer user questions about Direa.
     Please follow these rules when providing answers:
     1. All answers should be based on the content provided in the Document.
-    2. If you don't know the answer, do not make one up.
-    Instead, say [정확한 답을 찾을 수 없습니다. 좀더 자세한 정보를 제공해 주세요.]
+    2. Don't answer questions beyond the documents provided
+    3. If you don't know the answer, do not make one up.
+    Instead, say [정확한 답을 찾을 수 없습니다. Direa와 관련된 질문을 제공해 주세요.]
     {context}
     """
     )
