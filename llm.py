@@ -3,8 +3,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, FewS
     PromptTemplate
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_upstage import UpstageEmbeddings
 from langchain_pinecone import PineconeVectorStore
 
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -23,9 +23,12 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def get_retriever():
-    embedding = OpenAIEmbeddings(model='text-embedding-3-large')
-    index_name = 'wiki-openai-index'
-    namespace = "doc_v2"
+    # embedding = OpenAIEmbeddings(model='text-embedding-3-large')
+    # index_name = 'wiki-openai-index'
+    # namespace = "doc_v2"
+    embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
+    index_name = 'wiki-upstage-index'
+    namespace = "doc_v1"
     database = PineconeVectorStore.from_existing_index(index_name=index_name, namespace=namespace, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
     return retriever
@@ -47,7 +50,7 @@ def get_history_retriever():
     contextualize_q_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", contextualize_q_system_prompt),
-            MessagesPlaceholder("chat_history"),
+            MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}"),
         ]
     )
@@ -93,13 +96,15 @@ def get_rag_chain():
         examples=answer_examples,
     )
     system_prompt = ("""
-        당신은 똑똑한 디리아 상담 챗봇입니다. 사용자의 디리아(Direa)에 관한 질문에 답변해주세요
-        답변은 아래의 규칙을 따라서 답변해주세요
-        1. 모든 답변에는 직접적으로 참조한 자료의 목록을 추가해야 합니다. 최종 답변에 관련이 없는 자료는 제외합니다.
-        2. 답을 모를 경우 답을 지어내지 말고 [정확한 답을 찾을 수 없지만, 다음 링크를 확인해 보시기 바랍니다] 라고 말한 뒤 자료 링크를 목록으로 추가합니다.        "\n\n"
-        {context}
-        """
-                     )
+    You are a smart Direa advisory chatbot. Answer user questions about Direa.
+    Please follow these rules when providing answers:
+    1. All answers should be based on the content provided in the Document.
+    2. Don't answer questions beyond the documents provided
+    3. If you don't know the answer, do not make one up.
+    Instead, say [정확한 답을 찾을 수 없습니다. Direa와 관련된 질문을 제공해 주세요.]
+    {context}
+    """
+    )
 
     qa_prompt = ChatPromptTemplate.from_messages(
         [
@@ -131,7 +136,7 @@ def get_rag_chain():
         input_messages_key="input",
         history_messages_key="chat_history",
         output_messages_key="answer",
-    ).pick('answer')
+    )
 
     return conversational_rag_chain
 
@@ -139,14 +144,22 @@ def get_rag_chain():
 def get_ai_response(user_message):
     dictionary_chain = get_dictionary_chain()
     rag_chain = get_rag_chain()
-    tax_chain = {"input": dictionary_chain} | rag_chain
-    ai_response = tax_chain.stream(
+    final_chain = {"input": dictionary_chain} | rag_chain
+    ai_response = final_chain.pick("answer").stream(
         {
             "question": user_message
         },
         config={
             "configurable": {"session_id": "abc123"}
+        }
+    )
+    ai_resource = final_chain.pick("context").invoke(
+        {
+            "question": user_message
         },
+        config={
+            "configurable": {"session_id": "abc123"}
+        }
     )
 
-    return ai_response
+    return ai_response, ai_resource
