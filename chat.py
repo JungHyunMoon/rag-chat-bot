@@ -50,6 +50,6 @@ if user_question := st.chat_input(placeholder="디리아에 관련된 궁금한 
         with st.chat_message("ai"):
             ai_message = st.write_stream(ai_response)
             st.session_state.message_list.append({"role": "ai", "content": ai_message})
-        with st.chat_message("source"):
+        with st.chat_message(":information_source:"):
             resource = st.write_stream(write_sources(ai_resource))
             st.session_state.message_list.append({"role": "source", "content": resource})
