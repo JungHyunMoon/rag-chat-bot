@@ -23,7 +23,7 @@ def write_sources(documents):
     unique_sources = ["\n*이 정보는 다음의 자료를 기반으로 제공되었습니다.*"]
 
     for doc in documents:
-        source = doc.metadata.get("source")
+        source = doc.metadata.get("source").replace(".txt", "")
         if source not in sources:
             sources.add(source)
             link = s3_url + quote(source) # 한글 url encoding
