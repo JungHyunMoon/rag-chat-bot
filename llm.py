@@ -28,7 +28,7 @@ def get_retriever():
     # namespace = "doc_v2"
     embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
     index_name = 'wiki-upstage-index'
-    namespace = "doc_v1"
+    namespace = "chunk_1500_v1"
     database = PineconeVectorStore.from_existing_index(index_name=index_name, namespace=namespace, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
     return retriever
