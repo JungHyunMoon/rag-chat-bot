@@ -1,8 +1,6 @@
 # Direa AI Chat Bot
------
 
 ## Overview
------
 This repository contains a project that utilizes LangChain and Streamlit to build a Retrieval Augmented Generation (RAG) application. The primary focus of this application is to provide insights and answers based on the DireaWiki
 
 ## Features
