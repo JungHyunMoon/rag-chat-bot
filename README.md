@@ -4,12 +4,12 @@
 This repository contains a project that utilizes LangChain and Streamlit to build a Retrieval Augmented Generation (RAG) application. The primary focus of this application is to provide insights and answers based on the DireaWiki
 
 ## Features
-LangChain Integration: Utilizes LangChain to manage and interact with language models effectively.
-Streamlit Interface: A user-friendly web interface created with Streamlit for seamless interaction.
-Retrieval Augmented Generation (RAG): Combines retrieval-based techniques with generative models to produce accurate and context-aware answers.
-Knowledge Base: Focuses on the DireaWiki as the primary knowledge base.
-Chat History: Maintains a history of user interactions to provide contextually relevant answers.
-Few-Shot Learning Templates: Enhances the model's responses by using predefined templates for better accuracy and consistency.
+- LangChain Integration: Utilizes LangChain to manage and interact with language models effectively.
+- Streamlit Interface: A user-friendly web interface created with Streamlit for seamless interaction.
+- Retrieval Augmented Generation (RAG): Combines retrieval-based techniques with generative models to produce accurate and context-aware answers.
+- Knowledge Base: Focuses on the DireaWiki as the primary knowledge base.
+- Chat History: Maintains a history of user interactions to provide contextually relevant answers.
+- Few-Shot Learning Templates: Enhances the model's responses by using predefined templates for better accuracy and consistency.
 
 ## Installation
 1. Clone the repository:
