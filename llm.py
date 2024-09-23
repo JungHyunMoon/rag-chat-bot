@@ -116,16 +116,10 @@ def get_rag_chain():
     )
     history_aware_retriever = get_history_retriever()
 
-    # 답변에 소스 포함하기 위한 프롬프트
-    document_prompt = PromptTemplate(
-        input_variables=["page_content", "source"],
-        template="Context:\ncontent:{page_content}\nsource:{source}",
-    )
 
     question_answer_chain = create_stuff_documents_chain(
         llm=llm,
-        prompt=qa_prompt,
-        document_prompt=document_prompt,
+        prompt=qa_prompt
     )
 
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
@@ -153,13 +147,5 @@ def get_ai_response(user_message):
             "configurable": {"session_id": "abc123"}
         }
     )
-    ai_resource = final_chain.pick("context").invoke(
-        {
-            "question": user_message
-        },
-        config={
-            "configurable": {"session_id": "abc123"}
-        }
-    )
 
-    return ai_response, ai_resource
+    return ai_response
