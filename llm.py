@@ -67,7 +67,7 @@ def get_llm(model='gpt-4o-mini'):
 
 
 def get_dictionary_chain():
-    dictionary = ["Link를 나타내는 표현 -> CruzLink",]
+    dictionary = []
     llm = get_llm()
     prompt = ChatPromptTemplate.from_template(f"""
         사용자의 질문을 보고, 우리의 사전을 참고해서 사용자의 질문을 변경해주세요.
