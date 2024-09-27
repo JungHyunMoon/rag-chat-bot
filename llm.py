@@ -101,7 +101,7 @@ def get_rag_chain():
     1. All answers should be based on the content provided in the Document.
     2. Don't answer questions beyond the documents provided
     3. If you don't know the answer, do not make one up.
-    Instead, say [정확한 답을 찾을 수 없습니다. Direa와 관련된 질문을 제공해 주세요.]
+    Instead, say ["죄송합니다, 현재 질문에 대한 관련 문서를 찾을 수 없어 정확한 답변을 제공하기 어렵습니다. 다른 질문이나 더 구체적인 정보를 제공해주시면 추가로 도움을 드릴 수 있습니다."]
     {context}
     """
     )
