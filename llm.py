@@ -28,7 +28,7 @@ def get_retriever():
     # namespace = "doc_v2"
     embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
     index_name = 'wiki-upstage-index'
-    namespace = "chunk_1500_v1"
+    namespace = "chunk_1000_v2"
     database = PineconeVectorStore.from_existing_index(index_name=index_name, namespace=namespace, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
     return retriever
@@ -96,12 +96,9 @@ def get_rag_chain():
         examples=answer_examples,
     )
     system_prompt = ("""
-    You are a smart Direa advisory chatbot. Answer user questions about Direa.
-    Please follow these rules when providing answers:
-    1. All answers should be based on the content provided in the Document.
-    2. Don't answer questions beyond the documents provided
-    3. If you don't know the answer, do not make one up.
-    Instead, say [정확한 답을 찾을 수 없습니다. Direa와 관련된 질문을 제공해 주세요.]
+    You are an AI assistant that provides detailed and accurate answers based on the provided documents.
+    Use the information from the documents to answer the user's query.
+    If the answer is not present in the documents, say that you don't have enough information to answer.
     {context}
     """
     )
