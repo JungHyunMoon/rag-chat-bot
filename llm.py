@@ -132,7 +132,7 @@ def get_rag_chain():
     return conversational_rag_chain
 
 
-def get_ai_response(user_message):
+def get_ai_response(user_message, session_id):
     dictionary_chain = get_dictionary_chain()
     rag_chain = get_rag_chain()
     final_chain = {"input": dictionary_chain} | rag_chain
@@ -141,7 +141,7 @@ def get_ai_response(user_message):
             "question": user_message
         },
         config={
-            "configurable": {"session_id": "abc123"}
+            "configurable": {"session_id": session_id}
         }
     )
 
