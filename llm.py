@@ -23,14 +23,20 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def get_retriever():
-    # embedding = OpenAIEmbeddings(model='text-embedding-3-large')
-    # index_name = 'wiki-openai-index'
-    # namespace = "doc_v2"
-    embedding = UpstageEmbeddings(model='solar-embedding-1-large-query')
-    index_name = 'wiki-upstage-index'
-    namespace = "chunk_1000_v2"
-    database = PineconeVectorStore.from_existing_index(index_name=index_name, namespace=namespace, embedding=embedding)
-    retriever = database.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
+    embeddings = UpstageEmbeddings(model='solar-embedding-1-large-query')
+    # 로컬에 저장된 Chroma DB 불러오기
+    persist_directory = "../chroma_db"
+    collection_name = "wiki-upstage-collection"
+
+    # Chroma 벡터스토어 초기화
+    vectorstore = Chroma(
+        collection_name= collection_name,
+        embedding_function=embeddings,
+        persist_directory=persist_directory
+    )
+
+
+    retriever = vectorstore.as_retriever(search_kwargs={'k': 4}, return_source_documents=True)
     return retriever
 
 
