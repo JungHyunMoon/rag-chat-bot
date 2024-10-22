@@ -4,7 +4,6 @@ import uuid
 from dotenv import load_dotenv
 from llm import get_ai_response
 from upstage_ocr import ocr_service
-from PIL import Image
 
 # 페이지 설정
 st.set_page_config(page_title="디리아 챗봇", page_icon="🤖")
@@ -24,9 +23,6 @@ if 'message_list' not in st.session_state:
 if "file_uploader_key" not in st.session_state:
     st.session_state["file_uploader_key"] = 0
 
-if "uploaded_files" not in st.session_state:
-    st.session_state["uploaded_files"] = []
-
 st.sidebar.title("🛠️Options \n 체팅에 적용되는 다양한 옵션들 입니다.")
 st.sidebar.divider()
 files = st.sidebar.file_uploader(
@@ -44,9 +40,6 @@ model = st.sidebar.selectbox(
     ("OpenAI GPT 4o", "OpenAI GPT 4o-mini", "Solar Pro Preview"),
 )
 st.sidebar.write("You selected:", model)
-
-def clear_files():
-    st.session_state.uploaded_files += 1
 
 # 이전 메세지들 표시
 for message in st.session_state.message_list:
@@ -94,4 +87,4 @@ if user_question := st.chat_input(placeholder="디리아에 관련된 궁금한 
 
     # 업로드 파일 초기화
     st.session_state["file_uploader_key"] += 1
-    # st.rerun()
+    st.rerun()
