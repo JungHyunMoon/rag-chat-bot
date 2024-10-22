@@ -67,14 +67,30 @@ def get_llm(model='gpt-4o-mini'):
 
 
 def get_dictionary_chain():
-    dictionary = []
+    dictionary = [
+        "DIREA -> (주)디리아는 제1금융, 저축은행, 증권사, 보험사, 카드사, 공공기관 등을 대상으로 한 금융업무솔루션과 네트웍 기반 미들웨어 개발을 주력으로 하고 있는 금융IT 전문기업",
+        "FEP -> Front End Process의 약자로 대외계를 지칭하는 용어",
+        "MCI -> Multi Channel Interface의 약자",
+        "EDI -> 기업 간 데이터 교환을 위한 표준화된 인터페이스 방식",
+        "TPS -> 초당 거래 처리량",
+        "REST API -> HTTP 시스템을 위한 소프트 아키텍처",
+        "APIM -> API Management의 약자, API 관리 프로세스",
+        "배치 -> 특정 시간을 설정하여 일괄 처리하는 작업",
+        "HA -> High Availability, 이중화 구성으로 장애 복구를 지원",
+        "Adaptor -> 다양한 프로토콜을 사용하여 연계하는 서비스",
+        "프레임워크 -> 솔루션 개발을 돕는 소프트웨어 환경"
+    ]
+
     llm = get_llm()
+
     prompt = ChatPromptTemplate.from_template(f"""
-        사용자의 질문을 보고, 우리의 사전을 참고해서 사용자의 질문을 변경해주세요.
-        만약 변경할 필요가 없다고 판단된다면, 사용자의 질문을 변경하지 않아도 됩니다.
-        그런 경우에는 질문만 리턴해주세요
+        사용자의 질문을 분석하고, 사전에 있는 용어는 변경해주세요.
+        사전 내용은 다음과 같습니다:
         사전: {dictionary}
-        
+
+        만약 질문에 사전에 있는 용어가 없거나, 사전에 포함되지 않은 내용이 있더라도 그 부분은 그대로 유지해주세요.
+        용어를 교체할 필요가 없다면 질문을 그대로 리턴해주세요.
+
         질문: {{question}}
     """)
 
@@ -133,12 +149,12 @@ def get_rag_chain():
 
 
 def get_ai_response(user_message, session_id):
-    dictionary_chain = get_dictionary_chain()
+    # dictionary_chain = get_dictionary_chain() # 사용시 하단 input -> question으로 수정
     rag_chain = get_rag_chain()
-    final_chain = {"input": dictionary_chain} | rag_chain
-    ai_response = final_chain.pick("answer").stream(
+    # final_chain = {"input": dictionary_chain} | rag_chain
+    ai_response = rag_chain.pick("answer").stream(
         {
-            "question": user_message
+            "input": user_message
         },
         config={
             "configurable": {"session_id": session_id}
