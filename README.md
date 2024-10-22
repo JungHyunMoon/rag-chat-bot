@@ -14,7 +14,7 @@ This repository contains a project that utilizes LangChain and Streamlit to buil
 ## Installation
 1. Clone the repository:
 ```
-git clone https://gitlab.direa.synology.me/techcare/rag-chat-bot.git
+git clone https://github.com/JungHyunMoon/rag-chat-bot.git
 cd rag-chat-bot
 ```
 2. Create and activate a virtual environment:
